@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PS实战课件：撕纸艺术海报制作</title>
+    <style>
+        :root {
+            --ps-blue: #00a8ff;
+            --dark-bg: #1e1e1e;
+            --panel-bg: #2d2d2d;
+            --text-gray: #b1b1b1;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+        /* 顶部标题栏 */
+        header {
+            background: #000;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--ps-blue);
+        }
+        header h1 { font-size: 2rem; letter-spacing: 2px; }
+        header p { color: var(--ps-blue); font-weight: bold; margin-top: 10px; }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 章节通用样式 */
+        section {
+            background: var(--panel-bg);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            border-left: 5px solid var(--ps-blue);
+            padding-left: 15px;
+        }
+
+        /* 步骤布局：图文并排 */
+        .step-row {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            align-items: flex-start;
+        }
+
+        /* 拆分步骤：步骤与步骤之间的分隔线 */
+        .step-row + .step-row {
+            border-top: 1px solid #3a3a3a;
+            padding-top: 40px;
+            margin-top: 40px;
+        }
+
+        .step-text {
+            flex: 1;
+        }
+
+        .step-image {
+            flex: 1.2;
+            border: 2px solid #444;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .step-image img {
+            width: 100%;
+            display: block;
+            transition: transform 0.3s;
+        }
+
+        .step-image img:hover {
+            transform: scale(1.05); /* 鼠标悬停略微放大方便看清参数 */
+        }
+
+        .step-num {
+            background: var(--ps-blue);
+            color: black;
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .instruction {
+            margin-top: 15px;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .instruction b { color: var(--ps-blue); }
+        .key-btn { 
+            background: #444; 
+            padding: 2px 6px; 
+            border-radius: 3px; 
+            font-family: monospace;
+            border: 1px solid #666;
+        }
+
+        /* 注意事项卡片 */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .tip-card {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid #ff4757;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        /* 海报悬停效果 */
+        .poster:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.4);
+        }
+
+        /* 响应式 */
+        @media (max-width: 850px) {
+            .step-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>海报设计：PS水波倒影艺术设计制作</h1>
+</header>
+
+<div class="container">
+
+    <section>
+        <h2>课堂导入</h2>
+        <div class="instruction" style="border-left: 4px solid #ff9f43; margin-bottom: 25px;">
+            💬 <b>问题：</b>这两张倒影看起来有什么不同？
+        </div>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <div style="flex: 2; border: 3px solid var(--ps-blue); border-radius: 6px; overflow: hidden; display: flex; gap: 0; box-shadow: 0 0 10px rgba(0,168,255,0.3);">
+                <div style="flex: 1; border-right: 2px solid var(--ps-blue);">
+                    <img src="./1-1.png" alt="步骤1" style="width: 100%; display: block;">
+                </div>
+                <div style="flex: 1;">
+                    <img src="./2.png" alt="步骤2" style="width: 100%; display: block;">
+                </div>
+            </div>
+            <div style="flex: 0.7; text-align: center;">
+                <div style="border: 2px solid #444; border-radius: 4px; overflow: hidden; position: relative;">
+                    <img src="./日照金山.png" alt="最终效果" id="finalImg" style="width: 100%; display: block; filter: grayscale(100%) brightness(0%); transition: filter 0.5s ease;">
+                </div>
+                <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center; align-items: center;">
+                    <span style="color: var(--ps-blue); font-weight: bold; font-size: 1.1rem;">最终效果</span>
+                    <button id="toggleGrayBtn" onclick="toggleGray()" style="padding: 6px 16px; border-radius: 15px; background: var(--ps-blue); color: white; border: none; font-size: 12px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,168,255,0.3);">显现</button>
+                </div>
+            </div>
+            
+            <script>
+                let isGray = true;
+                function toggleGray() {
+                    const img = document.getElementById('finalImg');
+                    const btn = document.getElementById('toggleGrayBtn');
+                    isGray = !isGray;
+                    if (isGray) {
+                        img.style.filter = 'grayscale(100%) brightness(0%)';
+                        btn.textContent = '显现';
+                    } else {
+                        img.style.filter = 'grayscale(0%) brightness(100%)';
+                        btn.textContent = '置灰';
+                    }
+                }
+            </script>
+        </div>
+    </section>
+
+    <section>
+        <h2>透视原理</h2>
+        <div style="border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.4); background: #1a1a1a; height: 500px;">
+            <div id="canvas-container" style="width: 100%; height: 100%; cursor: grab;"></div>
+            <button id="topViewBtn" onclick="resetToTopView()" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 20px; background: var(--ps-blue); color: white; border: none; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,168,255,0.4); z-index: 10; transition: all 0.3s ease;">回到顶视图</button>
+        </div>
+    </section>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color('#2c3e50');
+        scene.fog = new THREE.FogExp2('#2c3e50', 0.02);
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 5, 18);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(10, 15, 10);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        const gridHelper = new THREE.GridHelper(30, 30, 0x888888, 0x444444);
+        gridHelper.position.y = -2;
+        scene.add(gridHelper);
+
+        function createApple(x, y, z, colorHex, scaleFactor) {
+            const appleGroup = new THREE.Group();
+
+            const geometry = new THREE.SphereGeometry(1.5, 32, 32);
+            const material = new THREE.MeshStandardMaterial({ 
+                color: colorHex, 
+                roughness: 0.3,
+                metalness: 0.1
+            });
+            const body = new THREE.Mesh(geometry, material);
+            body.scale.set(1, 0.9, 1);
+            body.castShadow = true;
+            body.receiveShadow = true;
+            appleGroup.add(body);
+
+            const stemGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.5, 8);
+            const stemMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 });
+            const stem = new THREE.Mesh(stemGeo, stemMat);
+            stem.position.set(0, 1.4, 0);
+            stem.castShadow = true;
+            appleGroup.add(stem);
+
+            appleGroup.position.set(x, y, z);
+            appleGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
+            
+            scene.add(appleGroup);
+            return appleGroup;
+        }
+
+        createApple(-2, -0.6, 4, 0xff3333, 1);
+        createApple(3, -0.6, -5, 0x88cc33, 1);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 + 0.1;
+
+        // 回到顶视图功能
+        window.resetToTopView = function() {
+            camera.position.set(0, 15, 0);
+            controls.target.set(0, 0, 0);
+            controls.update();
+        };
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+
+    <section>
+        <h2>拆分讲解：分步任务实操</h2>
+
+        <div class="step-row">
+            <div class="step-text">
+                <p><span class="step-num">Step 01</span> <b>制作水波纹理基础（添加杂色与模糊）</b></p>
+                <div class="instruction">
+                    新建画布： 创建一个 <b>500×500</b> 像素的正方形画布。<br><br>
+                    添加杂色： 选中图层，执行菜单栏的【滤镜】 -> 【杂色】 -> 【添加杂色】。<br><br>
+                    参数设置： 数量 <b>300%</b>，分布选择"平均分布"（不要勾选单色）。
+                </div>
+            </div>
+            <div class="step-image">
+                <img src="./Group 38.png" alt="步骤1">
+            </div>
+        </div>
+
+        <div class="step-row">
+            <div class="step-text">
+                <p><span class="step-num">Step 02</span> <b>高斯模糊</b></p>
+                <div class="instruction">
+                    继续执行【滤镜】 -> 【模糊】 -> 【高斯模糊】。<br><br>
+                    参数设置： 半径设为 <b>2.0</b> 像素。
+                </div>
+            </div>
+            <div class="step-image">
+                <img src="./Group 39.png" alt="步骤2">
+            </div>
+        </div>
+
+        <div class="step-row">
+            <div class="step-text">
+                <p><span class="step-num">Step 03</span> <b>制作水波立体感（红绿通道浮雕效果）</b></p>
+                <div class="instruction">
+                    红通道浮雕： 打开"通道"面板，单独选中红（Red）通道。执行【滤镜】 -> 【风格化】 -> 【浮雕效果】。<br><br>
+                    参数设置： 角度 <b>180度</b>，高度 <b>2</b> 像素，数量 <b>260%</b>。<br><br>
+                    绿通道浮雕： 接着单独选中绿（Green）通道。再次执行【滤镜】 -> 【风格化】 -> 【浮雕效果】。<br><br>
+                    参数设置： 角度 <b>90度</b>，高度 <b>2</b> 像素，数量 <b>260%</b>。
+                </div>
+            </div>
+            <div class="step-image">
+                <img src="./Group 40.png" alt="步骤3">
+            </div>
+        </div>
+
+        <div class="step-row">
+            <div class="step-text">
+                <p><span class="step-num">Step 04</span> <b>调整水波透视并保存（透视保存）</b></p>
+                <div class="instruction">
+                    恢复全彩： 在通道面板点击最上方的"RGB"通道恢复正常显示，然后切回"图层"面板。<br><br>
+                    透视变形： 选中图层按快捷键 <span class="key-btn">Ctrl + T</span> 进入自由变换，在画面中右键选择【透视】。<br><br>
+                    调整形态： 将左下角或右下角的控制点向外水平拖动，使其呈现出"近大远小"的水面透视感。按回车确认。<br><br>
+                    保存源文件： 将这个做好的水波纹文件另存为 <b>PSD</b> 格式，备用。
+                </div>
+            </div>
+            <div class="step-image">
+                <img src="./Group 41.png" alt="步骤4">
+            </div>
+        </div>
+
+        <div class="step-row">
+            <div class="step-text">
+                <p><span class="step-num">Step 05</span> <b>应用倒影变形（置换）</b></p>
+                <div class="instruction">
+                    准备倒影图层： 回到你的主视觉文档（如山川风景图），将风景图层垂直翻转，放置在下方作为倒影图层。<br><br>
+                    执行置换： 选中下方的倒影图层，执行【滤镜】 -> 【扭曲】 -> 【置换】。<br><br>
+                    参数设置： 水平比例 <b>30</b>，垂直比例 <b>150</b>，置换图选择"伸展以适合"，未定义区域选择"重复边缘像素"。<br><br>
+                    载入贴图： 点击确定后，系统会弹出文件选择框，此时选中你在第3步保存的 <b>PSD</b> 水波纹文件。水波的扭曲倒影效果就自动生成了。
+                </div>
+            </div>
+            <div class="step-image">
+                <img src="./Group 42.png" alt="步骤5">
+            </div>
+        </div>
+
+        <div class="step-row">
+            <div class="step-text">
+                <p><span class="step-num">Step 06</span> <b>增加质感与最终排版（滤镜与文字）</b></p>
+                <div class="instruction">
+                    添加胶片颗粒： 合并（或盖印）山川主图与倒影图层。执行【滤镜】 -> 【滤镜库】 -> 【艺术效果】 -> 【胶片颗粒】。<br><br>
+                    参考参数： 颗粒 <b>4</b>，高光区域 <b>0</b>，强度 <b>4</b>（数值可根据你图片的实际明暗情况进行微调）。
+                </div>
+            </div>
+            <div class="step-image">
+                <img src="./Group 43.png" alt="步骤6">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>注意事项</h2>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <h4 style="color:#ff4757; margin-bottom:10px;">⚠️ 精准锁定扭曲对象</h4>
+                <p>在执行【置换】（扭曲）操作前，必须先在图层面板中明确框选指定图案（即倒影图案）。如果没有正确框选中对象，水波纹的扭曲效果会很奇怪。</p>
+            </div>
+            <div class="tip-card" style="border-color: #00d2d3; background: rgba(0,210,211,0.1);">
+                <h4 style="color:#00d2d3; margin-bottom:10px;">📁 置换文件必须为 PSD 格式</h4>
+                <p>在保存制作好的水波纹理图时，一定要将其保存为 Photoshop 原生的 <b>.psd</b> 格式文件。因为【置换】滤镜只能识别并读取 PSD 文件中的通道灰度信息来计算水波的起伏，是无法成功导入并产生扭曲效果的。</p>
+            </div>
+        </div>
+    </section>
+
+    <section style="text-align: left; background: black; color: white;">
+        <h2 style="border: none; justify-content: center; text-align: center;">课堂小结</h2>
+        <div style="max-width: 800px; margin: 0 auto; padding: 20px 0;">
+            <h3 style="margin-top: 20px; margin-bottom: 15px;">技术：</h3>
+            <ul style="list-style-type: disc; margin-left: 20px; line-height: 1.6;">
+                <li><strong>基础纹理构建：</strong> 组合使用【添加杂色】与【高斯模糊】与【浮雕效果】，无中生有地制作出基础的自然肌理。</li>
+                <li><strong>核心滤镜（置换）：</strong> 将做好的波纹保存为独立 PSD，再利用【滤镜-扭曲-置换】功能，强制让主图的倒影层根据波纹文件的明暗起伏发生物理扭曲。</li>
+                <li><strong>质感渲染：</strong> 结合【胶片颗粒】滤镜统一画面的艺术氛围。</li>
+            </ul>
+            
+            <h3 style="margin-top: 30px; margin-bottom: 15px;">视觉方法：</h3>
+            <ul style="list-style-type: disc; margin-left: 20px; line-height: 1.6;">
+                <li><strong>近大远小：</strong> 平铺的波纹是没有灵魂的。真实的水面波纹在人类视觉中遵循透视规律：距离眼睛近的波纹看起来大且宽，距离远的看起来细且密。</li>
+            </ul>
+        </div>
+    </section>
+
+</div>
+
+</html>
